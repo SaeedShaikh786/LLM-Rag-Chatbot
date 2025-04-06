@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 from src.load_and_chunk_pdfs import load_and_chunk_pdfs
 from src.generate_embeddings import get_gemini_embeddings
 from src.store_embeddings import store_in_pinecone
@@ -14,13 +15,18 @@ def main():
     st.title("PDF RAG Chatbot")
     st.write("Upload PDF files and ask questions to get answers based on the content of the PDFs.")
 
+    # Create the directory for storing PDFs if it doesn't exist
+    pdf_dir = "pdfs"
+    if not os.path.exists(pdf_dir):
+        os.makedirs(pdf_dir)
+
     # File uploader
     pdf_files = st.file_uploader("Upload PDFs", type=["pdf"], accept_multiple_files=True)
 
     if pdf_files:
         pdf_paths = []
         for pdf_file in pdf_files:
-            pdf_path = pdf_file.name
+            pdf_path = os.path.join(pdf_dir, pdf_file.name)
             pdf_paths.append(pdf_path)
             with open(pdf_path, "wb") as f:
                 f.write(pdf_file.getbuffer())
@@ -33,7 +39,7 @@ def main():
         embeddings = get_gemini_embeddings(texts)
         
         # Store embeddings in Pinecone
-        store_in_pinecone(chunks, embeddings, namespace="RAGchatbot-2",index_name='llm-chatbot')
+        store_in_pinecone(chunks, embeddings, namespace="RAGchatbot")
 
         st.success("PDFs processed and embeddings stored successfully.")
 
@@ -42,7 +48,7 @@ def main():
 
         if query:
             # Run the RAG pipeline
-            answer = run_rag_pipeline(query, namespace="RAGchatbot-2")
+            answer = run_rag_pipeline(query, namespace="RAGchatbot")
             st.markdown(answer)
 
 if __name__ == "__main__":
