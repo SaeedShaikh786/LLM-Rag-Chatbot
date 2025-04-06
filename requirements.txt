@@ -1,2 +1,10 @@
+python-dotenv
+langchain-community==0.3.3
+langchain-pinecone==0.2.0
+langchain-google-genai
+unstructured==0.16.3
+langchain-text-splitters==0.3.0
+pymupdf
+pdfplumber
 streamlit
-pandas
+google-generativeai
