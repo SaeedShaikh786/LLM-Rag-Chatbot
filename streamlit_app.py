@@ -1,13 +1,19 @@
 import streamlit as st
 import os
+import uuid  
 from src.load_and_chunk_pdfs import load_and_chunk_pdfs
 from src.generate_embeddings import get_gemini_embeddings
 from src.store_embeddings import store_in_pinecone
 from src.retrieve_embeddings import retrieve_from_pinecone
 from src.generate_response import generate_response
+from dotenv import load_dotenv  
 
-def run_rag_pipeline(query, namespace="default"):
-    retrieved = retrieve_from_pinecone(query, namespace=namespace,index_name="llm-chatbot")
+
+# Load environment variables from .env file
+load_dotenv()
+
+def run_rag_pipeline(query, namespace="default",index_name="llm-chatbot"):
+    retrieved = retrieve_from_pinecone(query, namespace=namespace,index_name=index_name)
     response = generate_response(query, retrieved)
     return response
 
@@ -29,6 +35,10 @@ def main():
         st.header("📥 Upload PDFs")
         pdf_files = st.file_uploader("Upload PDFs", type=["pdf"], accept_multiple_files=True)
 
+ # Generate a unique namespace for each session
+        if "namespace" not in st.session_state:
+            st.session_state.namespace = str(uuid.uuid4())
+
         if pdf_files:
             pdf_paths = []
             for pdf_file in pdf_files:
@@ -47,7 +57,7 @@ def main():
                     embeddings = get_gemini_embeddings(texts)
 
                 with st.spinner("Storing in Pinecone..."):
-                    store_in_pinecone(chunks, embeddings, namespace="RAGchatbot-2",index_name="llm-chatbot")
+                    store_in_pinecone(chunks, embeddings, namespace=st.session_state.namespace,index_name="llm-chatbot")
 
                 st.success("All steps completed.")
                 st.session_state.pdf_processed = True  # Update flag
@@ -58,7 +68,7 @@ def main():
         query = st.text_input("Ask something about the PDFs:")
         if query:
             with st.spinner("Generating answer..."):
-                answer = run_rag_pipeline(query, namespace="RAGchatbot-2")
+                answer = run_rag_pipeline(query, namespace=st.session_state.namespace,index_name="llm-chatbot")
             st.success("Here’s the response:")
             st.markdown(answer)
     else:

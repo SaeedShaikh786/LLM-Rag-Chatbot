@@ -22,9 +22,9 @@ from src.generate_embeddings import get_gemini_embeddings
 # Initialize Pinecone client
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 
-index_name = "llm-chatbot"
+#index_name = "llm-chatbot"
 
-def retrieve_from_pinecone(query, top_k=5, namespace="default",index_name=index_name):
+def retrieve_from_pinecone(query, top_k=6, namespace="default",index_name="llm-chatbot"):
     index = pc.Index(index_name)
     query_embedding = get_gemini_embeddings([query])[0]
 

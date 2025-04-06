@@ -10,7 +10,7 @@ Context: {context}
 Question: {question}
 
 Provide a well-structured and comprehensive response in markdown format. Use bullet points, headings, and code blocks where appropriate. 
-Give your answer strictly on the provided context and if the answer is not found in the context, 
+Base your answer strictly on the provided CONTEXT and if the answer is not found in the CONTEXT, 
 reply with "I couldn't find the answer in the provided document."
 .
 """
