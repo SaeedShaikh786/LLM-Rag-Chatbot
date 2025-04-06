@@ -5,7 +5,7 @@ from pinecone import Pinecone, ServerlessSpec
 # Initialize Pinecone client
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 
-def store_in_pinecone(chunks, embeddings, namespace="default", index_name="rag-chatbot", dimension=768):
+def store_in_pinecone(chunks, embeddings, namespace="default", index_name="rag-chatbot", dimension=768, batch_size=100):
     # Create the index if it doesn't exist
     if index_name not in pc.list_indexes().names():
         print(f"Index '{index_name}' not found. Creating new index...")
@@ -34,33 +34,13 @@ def store_in_pinecone(chunks, embeddings, namespace="default", index_name="rag-c
             }
             to_upsert.append(vector)
 
-    # Upsert into Pinecone
-    index.upsert(vectors=to_upsert, namespace=namespace)
-    print(f"✅ Stored {len(to_upsert)} vectors in index '{index_name}' under namespace '{namespace}'")
+            # If batch size is reached, upsert the batch and clear the list
+            if len(to_upsert) >= batch_size:
+                index.upsert(vectors=to_upsert, namespace=namespace)
+                print(f"✅ Stored {len(to_upsert)} vectors in index '{index_name}' under namespace '{namespace}'")
+                to_upsert = []
 
-
-
-'''
-import uuid
-from pinecone import Pinecone
-from src.config import PINECONE_API_KEY
-
-pc = Pinecone(api_key=PINECONE_API_KEY)
-index = pc.Index("rag-chatbot")
-
-def store_in_pinecone(chunks, embeddings, namespace="default"):
-    to_upsert = []
-
-    for doc, embed in zip(chunks, embeddings):
-        if embed is not None:
-            vector = {
-                "id": str(uuid.uuid4()),
-                "values": embed,
-                "metadata": {
-                    "text": doc.page_content,
-                    "page": doc.metadata.get("page", 0)
-                }
-            }
-            to_upsert.append(vector)
-
-    index.upsert(vectors=to_upsert, namespace=namespace) '''
+    # Upsert any remaining vectors
+    if to_upsert:
+        index.upsert(vectors=to_upsert, namespace=namespace)
+        print(f"✅ Stored {len(to_upsert)} vectors in index '{index_name}' under namespace '{namespace}'")

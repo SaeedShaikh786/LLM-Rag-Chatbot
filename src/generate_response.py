@@ -9,7 +9,7 @@ Context: {context}
 
 Question: {question}
 
-Provide a well-structured and comprehensive response in markdown format. Use bullet points, headings, and code blocks where appropriate. 
+Provide a well-structured and comprehensive response in markdown format. Use bullet points, headings, and code blocks only where appropriate. 
 Base your answer strictly on the provided CONTEXT and if the answer is not found in the CONTEXT, 
 reply with "I couldn't find the answer in the provided document."
 .

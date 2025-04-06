@@ -8,6 +8,7 @@ from src.retrieve_embeddings import retrieve_from_pinecone
 from src.generate_response import generate_response
 from dotenv import load_dotenv  
 
+# st.set_option('server.maxUploadSize', 1024)  # in MB, e.g., 1024 MB = 1 GB
 
 # Load environment variables from .env file
 load_dotenv()
