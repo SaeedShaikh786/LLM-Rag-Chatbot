@@ -55,7 +55,7 @@ def main():
                     texts = [doc.page_content for doc in chunks]
 
                 with st.spinner("Generating embeddings..."):
-                    embeddings = get_gemini_embeddings(texts)
+                    embeddings = get_gemini_embeddings(texts,max_workers=8)
 
                 with st.spinner("Storing in Pinecone..."):
                     store_in_pinecone(chunks, embeddings, namespace=st.session_state.namespace,index_name="llm-chatbot")
