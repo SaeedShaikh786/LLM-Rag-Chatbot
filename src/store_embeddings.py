@@ -3,7 +3,10 @@ import uuid
 from pinecone import Pinecone, ServerlessSpec
 
 # Initialize Pinecone client
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+#pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+from src.config import PINECONE_API_KEY
+# Initialize Pinecone client
+pc = Pinecone(api_key=PINECONE_API_KEY)
 
 def store_in_pinecone(chunks, embeddings, namespace="default", index_name="rag-chatbot", dimension=768, batch_size=100):
     # Create the index if it doesn't exist

@@ -18,9 +18,13 @@ def retrieve_from_pinecone(query, top_k=5, namespace="default"):
 import os
 from pinecone import Pinecone
 from src.generate_embeddings import get_gemini_embeddings
+from src.config import PINECONE_API_KEY
 
 # Initialize Pinecone client
-pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
+pc = Pinecone(api_key=PINECONE_API_KEY)
+
+# Initialize Pinecone client
+#pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 
 #index_name = "llm-chatbot"
 
